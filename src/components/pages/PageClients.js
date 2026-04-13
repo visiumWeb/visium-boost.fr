@@ -103,7 +103,7 @@ export default function PageClients() {
             {entreprises.length} établissement{entreprises.length > 1 ? "s" : ""} —
             {" "}chaque entreprise a sa propre URL{" "}
             <code style={{ fontSize: 11, background: "#F0F0FA", padding: "2px 6px", borderRadius: 4 }}>
-              slug.{APP_DOMAIN}
+              {CUSTOM_DOMAIN ? `slug.${CUSTOM_DOMAIN}` : `${APP_URL}/s/slug`}
             </code>
           </p>
         </div>
@@ -148,7 +148,11 @@ export default function PageClients() {
             <div>
               <label style={{ fontSize: 12, fontWeight: 700, color: "#718096", display: "block", marginBottom: 6 }}>
                 Slug URL * —{" "}
-                <span style={{ color: "#6C5CE7" }}>{form.slug || "…"}.{APP_DOMAIN}</span>
+                <span style={{ color: "#6C5CE7" }}>
+                  {form.slug
+                    ? getPublicUrl(form.slug)
+                    : (CUSTOM_DOMAIN ? `….${CUSTOM_DOMAIN}` : `${APP_URL}/s/…`)}
+                </span>
               </label>
               <input
                 value={form.slug}
@@ -289,7 +293,7 @@ export default function PageClients() {
           </div>
 
           {entreprises.map((e) => {
-            const pubUrl = `https://${e.slug}.${APP_DOMAIN}`;
+            const pubUrl = getPublicUrl(e.slug);
             return (
               <div key={e._id} style={{
                 display: "grid", gridTemplateColumns: "2fr 2fr 1fr 1fr 120px",
