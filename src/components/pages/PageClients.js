@@ -3,7 +3,19 @@
 import { useState, useEffect } from "react";
 import Icon from "@/components/Icon";
 
-const APP_DOMAIN = process.env.NEXT_PUBLIC_APP_DOMAIN || "zreview.fr";
+// Si domaine custom configuré → sous-domaine (restaurant.zreview.fr)
+// Sinon → chemin direct (zreview.vercel.app/s/restaurant)
+const CUSTOM_DOMAIN = process.env.NEXT_PUBLIC_APP_DOMAIN;
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "";
+
+function getPublicUrl(slug) {
+  if (CUSTOM_DOMAIN) {
+    return `https://${slug}.${CUSTOM_DOMAIN}`;
+  }
+  // Fallback : chemin direct sur l'URL de déploiement
+  const base = APP_URL || (typeof window !== "undefined" ? window.location.origin : "");
+  return `${base}/s/${slug}`;
+}
 
 const emptyForm = {
   nom: "", slug: "", lien_avis: "",
@@ -67,8 +79,7 @@ export default function PageClients() {
   };
 
   const copyUrl = (slug) => {
-    const url = `https://${slug}.${APP_DOMAIN}`;
-    navigator.clipboard.writeText(url);
+    navigator.clipboard.writeText(getPublicUrl(slug));
     setCopied(slug);
     setTimeout(() => setCopied(null), 2000);
   };
